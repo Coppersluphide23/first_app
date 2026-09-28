@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "805224102883",
+    "project_id": "firstapp-dbaf5",
+    "storage_bucket": "firstapp-dbaf5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805224102883:android:4c0d41588a5fb693643ed6",
+        "android_client_info": {
+          "package_name": "com.example.firstapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu3fIEOmi1T2ZdMZ-oU4MJvZmksc28VK4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
