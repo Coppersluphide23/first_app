@@ -3,6 +3,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.navigation.NavHostController
 import com.example.firstapp.models.User
+import com.example.firstapp.navigation.ROUTE_DASHBOARD
 import com.example.firstapp.navigation.ROUTE_LOGIN
 import com.example.firstapp.navigation.ROUTE_REGISTER
 import com.google.firebase.auth.FirebaseAuth
@@ -45,6 +46,37 @@ class AuthViewModel ( var navController: NavHostController, var context : Contex
 
     }
     //login function
+    fun login(email : String, password : String){
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
+            if(it.isSuccessful){
+                Toast.makeText(context,"Login Successful",Toast.LENGTH_LONG).show()
+                navController.navigate(ROUTE_DASHBOARD)
+            }else{
+                Toast.makeText(context,it.exception?.message?:"error logging in",Toast.LENGTH_LONG).show()
+            }
+        }
+    }
     //signout function
+    fun signout(){
+        mAuth.signOut()
+        navController.navigate(ROUTE_LOGIN)
+        { popUpTo(0) }
+    }
+    //getting current username
+    fun getCurrentUsername(onResult:(String) -> Unit){
+        val userId = mAuth.currentUser?.uid
+        if (userId==null){
+            onResult("user")
+            return
+        }
+        FirebaseDatabase.getInstance().getReference("Users")
+            .child(userId)
+            .get()
+            .addOnSuccessListener {snapshot ->
+                val fullName=snapshot.child("fullName").getValue(String::class.java)
+                onResult(fullName ?: "user")
+            }
 
+
+    }
 }
