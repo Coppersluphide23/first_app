@@ -11,6 +11,7 @@ import com.example.firstapp.screens.register.RegisterScreen
 import com.example.firstapp.screens.splashscreen.Splashscreen
 import com.example.firstapp.screens.dashboard.DashboardScreen
 import com.example.firstapp.screens.onboardingscreen.OnboardingScreen
+import com.example.firstapp.screens.userdash.UserDashboard
 
 @Composable
 fun AppNavHost(
@@ -38,6 +39,9 @@ fun AppNavHost(
      composable (ROUTE_ONBOARDING) {
          OnboardingScreen(navController)
      }
+     composable (ROUTE_USERDASHBOARD) {
+          UserDashboard(navController)
+      }
   }
 
 }

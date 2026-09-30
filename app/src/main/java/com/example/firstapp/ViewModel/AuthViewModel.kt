@@ -6,6 +6,7 @@ import com.example.firstapp.models.User
 import com.example.firstapp.navigation.ROUTE_DASHBOARD
 import com.example.firstapp.navigation.ROUTE_LOGIN
 import com.example.firstapp.navigation.ROUTE_REGISTER
+import com.example.firstapp.navigation.ROUTE_USERDASHBOARD
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
@@ -23,7 +24,7 @@ class AuthViewModel ( var navController: NavHostController, var context : Contex
             //create user
             mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener{
                 if(it.isSuccessful){
-                    val userdata= User(fullName,email,password,mAuth.currentUser!!.uid)
+                    val userdata= User(fullName,email,password,mAuth.currentUser!!.uid,"user")
                     //save user data to real-time database
                     val regRef= FirebaseDatabase.getInstance().getReference().child("Users/"+mAuth.currentUser!!.uid)
                     regRef.setValue(userdata).addOnCompleteListener {
@@ -47,10 +48,21 @@ class AuthViewModel ( var navController: NavHostController, var context : Contex
     }
     //login function
     fun login(email : String, password : String){
-        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener{
-            if(it.isSuccessful){
-                Toast.makeText(context,"Login Successful",Toast.LENGTH_LONG).show()
-                navController.navigate(ROUTE_DASHBOARD)
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener {
+            if (it.isSuccessful) {
+                val userId = mAuth.currentUser?.uid
+                //fetch user role from database
+                FirebaseDatabase.getInstance().reference.child("Users").child(userId!!).get()
+                    .addOnSuccessListener { snapshot ->
+                        var role = snapshot.child("role").value.toString()
+                        //role based navigation
+                        if (role == "admin") {
+                            navController.navigate(ROUTE_DASHBOARD)
+                        } else {
+                            navController.navigate(ROUTE_USERDASHBOARD)
+                        }
+                        Toast.makeText(context, "Login Successful", Toast.LENGTH_LONG).show()
+                    }
             }else{
                 Toast.makeText(context,it.exception?.message?:"error logging in",Toast.LENGTH_LONG).show()
             }

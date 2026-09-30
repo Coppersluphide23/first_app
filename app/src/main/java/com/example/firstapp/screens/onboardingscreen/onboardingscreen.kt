@@ -128,7 +128,7 @@ fun OnboardingScreen(navController: NavHostController) {
                             )
                             .clip(CircleShape)
                             .background(
-                                if (isSelected) Color.Blue else Color.Gray
+                                if (isSelected) Color(0xFF4E5F87) else Color.Gray
                             )
                     )
                 }

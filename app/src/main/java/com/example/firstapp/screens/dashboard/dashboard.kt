@@ -66,7 +66,7 @@ fun DashboardScreen(navController: NavHostController) {
                     Text("Dashboard")
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Cyan,
+                    containerColor = Color(0xFF8CA1CF),
                     titleContentColor = Color.Blue
                 ),
                 actions = {

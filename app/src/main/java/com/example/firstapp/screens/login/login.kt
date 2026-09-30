@@ -70,7 +70,6 @@ fun LoginScreen(navController: NavHostController){
             color= Color.Blue,
             fontSize = 20.sp
         )
-        Spacer(modifier = Modifier.height(20.dp))
         Image(
             painter = painterResource(id = R.drawable.flowers),
             contentDescription = "pink tulips image",
@@ -78,7 +77,6 @@ fun LoginScreen(navController: NavHostController){
                 .size(200.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.height(20.dp))
          var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         OutlinedTextField(
@@ -94,7 +92,7 @@ fun LoginScreen(navController: NavHostController){
                 )
             }
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -109,7 +107,7 @@ fun LoginScreen(navController: NavHostController){
                 )
             }
         )
-        Spacer(modifier= Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         val context= LocalContext.current
         val myAuth= AuthViewModel(navController, context)
         Button(
