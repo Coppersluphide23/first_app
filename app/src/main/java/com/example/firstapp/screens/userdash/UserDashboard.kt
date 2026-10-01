@@ -39,7 +39,7 @@ fun UserDashboard(navController: NavHostController){
         //bottom bar
         bottomBar = {
             NavigationBar(
-                containerColor = Color(0XFF95C9B9),
+                containerColor = Color(0XFFADEDBA),
             ){
                 NavigationBarItem(
                     selected = true,

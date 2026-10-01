@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.firstapp.screens.addproducts.AddProductScreen
+import com.example.firstapp.screens.addproducts.AddProductScreen
 import com.example.firstapp.screens.login.LoginScreen
 import com.example.firstapp.screens.register.RegisterScreen
 import com.example.firstapp.screens.splashscreen.Splashscreen
@@ -41,6 +43,9 @@ fun AppNavHost(
      }
      composable (ROUTE_USERDASHBOARD) {
           UserDashboard(navController)
+      }
+      composable (ROUTE_ADDPRODUCT) {
+          AddProductScreen(navController)
       }
   }
 

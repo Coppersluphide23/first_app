@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.firstapp.ViewModel.AuthViewModel
+import com.example.firstapp.navigation.ROUTE_ADDPRODUCT
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,7 +68,7 @@ fun DashboardScreen(navController: NavHostController) {
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF8CA1CF),
-                    titleContentColor = Color.Blue
+                    titleContentColor = Color(0xFFCFBA8C)
                 ),
                 actions = {
                     IconButton(onClick = {}) {
@@ -138,6 +139,7 @@ fun DashboardScreen(navController: NavHostController) {
             }
         },
 
+
         // Floating action button
         floatingActionButton = {
             FloatingActionButton(onClick = {}) {
@@ -167,9 +169,9 @@ fun DashboardScreen(navController: NavHostController) {
             //row
             Row() {
                 DashboardCard(
-                    title = "Super",
+                    title = "Add product",
                     background = Color.Gray,
-                    onClick = {}
+                    onClick = {navController.navigate(ROUTE_ADDPRODUCT)}
                 )
                 DashboardCard(
                     title = "Profile",
