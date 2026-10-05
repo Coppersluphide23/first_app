@@ -69,7 +69,7 @@ fun AddProductScreen(navController : NavHostController){
                 .padding(innerpadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text= "Add Product",fontSize = 20.sp, color = Color(0xFF994A3C))
+            Text(text= "Add Product",fontSize = 20.sp, color = Color(0xFF832B1C))
             Spacer(modifier = Modifier.height(10.dp))
             var productName by remember { mutableStateOf("") }
             var description by remember { mutableStateOf( "") }
