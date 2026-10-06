@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +41,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.firstapp.R
+import com.example.firstapp.ViewModel.ProductViewModel
 
 //create addproduct screen preview
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,23 +85,23 @@ fun AddProductScreen(navController : NavHostController){
 
             //Outlined text field
             OutlinedTextField(
-                value = "ProductName",
-                onValueChange = {it},
+                value = productName,
+                onValueChange = {productName=it},
                 label = { Text("Product Name")},
                 modifier = Modifier.padding(8.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
-                value = "ProductDescription",
-                onValueChange = {it},
+                value = description,
+                onValueChange = { description=it },
                 label = { Text("Product Description")},
                 modifier = Modifier.padding(8.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
-                value = "ProductPrice",
-                onValueChange = {it},
+                value = price,
+                onValueChange = { price=it },
                 label = { Text("Product Price")},
                 modifier = Modifier.padding(8.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
@@ -124,9 +126,24 @@ fun AddProductScreen(navController : NavHostController){
                 Text("Pick an image", fontSize = 10.sp, color= Color(0xFF994A3C))
             }
             val context= LocalContext.current
+            val myProductViewmodel = ProductViewModel(navController, context)
             Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    myProductViewmodel.addProduct(
+                        name = productName,
+                        price = price,
+                        description = description,
+                        imageUri = imageUri
+                    )
+                    //clear outlined TextFields
+                    productName=""
+                    price=""
+                    description=""
+                    imageUri=null
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 colors = buttonColors(containerColor = Color(0xFF507FE5))
             ) {Text("Add Product", color = Color(0xFFE5B650), fontSize = 20.sp)}
 
@@ -141,7 +158,7 @@ fun AddProductPreview(){
 }
 //add scaffold-top bar and bottom nav
 //column layout
-//text addproduct
+//text addProduct
 //add three outlined textField for name,description,price
 //add image picker
 //add product button

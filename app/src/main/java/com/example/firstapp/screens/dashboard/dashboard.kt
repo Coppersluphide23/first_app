@@ -54,6 +54,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.firstapp.ViewModel.AuthViewModel
 import com.example.firstapp.navigation.ROUTE_ADDPRODUCT
+import com.example.firstapp.navigation.ROUTE_PRODUCTLIST
+import com.example.firstapp.navigation.ROUTE_USERDASHBOARD
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -174,17 +176,17 @@ fun DashboardScreen(navController: NavHostController) {
                     onClick = {navController.navigate(ROUTE_ADDPRODUCT)}
                 )
                 DashboardCard(
-                    title = "Profile",
+                    title = "Product list",
                     background = Color.Yellow,
-                    onClick = {}
+                    onClick = {navController.navigate(ROUTE_PRODUCTLIST)}
                 )
 
                 }
             Row() {
                 DashboardCard(
-                    title = "All caps",
+                    title = "User dashboard",
                     background = Color.Red,
-                    onClick = {}
+                    onClick = {navController.navigate(ROUTE_USERDASHBOARD)}
                 )
                 DashboardCard(
                     title = "No jokes",

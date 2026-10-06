@@ -2,7 +2,9 @@ package com.example.firstapp.ViewModel
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.navigation.NavHostController
+import com.example.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -44,9 +46,21 @@ class ProductViewModel (var navController: NavHostController, val context: Conte
                     "userId" to userId,
                     "imageUrl" to imageUrl
                 )
-                ref.setValue(productData).addOnCompleteListener { task -> }
-            } catch (e: Exception) {
+                ref.setValue(productData).addOnCompleteListener {
+                if (it.isSuccessful){
+                    Toast.makeText(context,"Product added successfully", Toast.LENGTH_LONG).show()
+                    //navigate to product list
+                    navController.navigate(ROUTE_PRODUCTLIST)
 
+                  }
+                    else{
+                        Toast.makeText(context,"${it.exception?.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (e: Exception) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "Upload failed ${e.message}", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
