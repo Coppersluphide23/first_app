@@ -88,4 +88,21 @@ class ProductViewModel (var navController: NavHostController, val context: Conte
         val secureUrl = JSONObject(responseBody).optString("secure_url").takeIf { it.isNotBlank() }
         return requireNotNull(secureUrl) { "Failed to get image url" }
     }
+    //r - Read products from db
+   //fetch all products from real time
+    fun allProducts(){
+
+    }
+    //u-update
+    //update existing product in firebase
+    fun updateProduct(){
+
+    }
+    //d-delete
+    //deletes an existing product from realtime db
+    fun deleteProduct(){
+
+    }
+
 }
+

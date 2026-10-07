@@ -44,5 +44,5 @@ fun BoxScreen(){
 @Preview(showBackground = true)
 @Composable
 fun Boxscreenpreview(){
-    Boxscreenpreview()
+    BoxScreen()
 }
