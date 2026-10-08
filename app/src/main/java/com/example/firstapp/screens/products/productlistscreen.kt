@@ -27,9 +27,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,9 +41,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.example.firstapp.models.Product
 import com.example.firstapp.navigation.ROUTE_ADDPRODUCT
 import com.example.firstapp.R
+import com.example.firstapp.ViewModel.ProductViewModel
+import com.example.firstapp.navigation.ROUTE_UPDATEPRODUCT
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,12 +76,12 @@ fun productListScreen(navController: NavHostController){
     }
 
 ){ innerPadding ->
-        val products = listOf(
-            Product("1","bag","a nice bag","5900", R.drawable.bag.toString()),
-            Product("2","shoes","nice shoes","5000", R.drawable.shoes.toString()),
-            Product("3","watch","nice watch","15000", R.drawable.watch.toString()),
-            Product("4","laptop","Asus laptop","100000", R.drawable.laptop.toString()),
-        )
+  val products = remember { mutableStateListOf<Product>() }
+        val context = LocalContext.current
+        val myproductViewModel= ProductViewModel(navController, context)
+        LaunchedEffect(Unit) {
+            myproductViewModel.allProducts(products)
+        }
         //lazy column
         LazyColumn(
             modifier = Modifier
@@ -95,11 +102,11 @@ fun productListScreen(navController: NavHostController){
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .padding(bottom=16.dp),
+                        .padding(bottom = 16.dp),
                 ){
                     //product image
-                    Image(painter = painterResource(id=item.imageURL.toInt()),
+                    AsyncImage(
+                        model = item.imageUrl,
                     contentDescription ="product image",
                     contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -136,7 +143,7 @@ fun productListScreen(navController: NavHostController){
                             ){
                                 Text(text="Delete")
                             }
-                            Button(onClick = {},
+                            Button(onClick = {navController.navigate(ROUTE_UPDATEPRODUCT)},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFF72CF81)
                                 ),

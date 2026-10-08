@@ -3,10 +3,15 @@ package com.example.firstapp.ViewModel
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation.NavHostController
+import com.example.firstapp.models.Product
 import com.example.firstapp.navigation.ROUTE_PRODUCTLIST
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -90,13 +95,39 @@ class ProductViewModel (var navController: NavHostController, val context: Conte
     }
     //r - Read products from db
    //fetch all products from real time
-    fun allProducts(){
-
+    fun allProducts(products: SnapshotStateList<Product>){
+        databasereference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                products.clear()
+                for (snap in snapshot.children){
+                    val retrievedProduct=snap.getValue(Product::class.java)
+                    if (retrievedProduct !=null){
+                        products.add(retrievedProduct)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+               Toast.makeText(context,error.message,Toast.LENGTH_LONG).show()
+            }
+        })
     }
     //u-update
     //update existing product in firebase
-    fun updateProduct(){
-
+    fun updateProduct(products: SnapshotStateList<Product>){
+        databasereference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                products.clear()
+                for (snap in snapshot.children){
+                    val updateProduct=snap.getValue(Product::class.java)
+                    if (updateProduct !=null){
+                        products.add(updateProduct)
+                    }
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(context,error.message,Toast.LENGTH_LONG).show()
+            }
+        })
     }
     //d-delete
     //deletes an existing product from realtime db
