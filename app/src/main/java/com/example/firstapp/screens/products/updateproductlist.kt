@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,8 +25,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,17 +47,18 @@ import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.firstapp.R
 import com.example.firstapp.ViewModel.ProductViewModel
+import com.example.firstapp.models.Product
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun updateProductScreen(navController: NavHostController){
+fun updateProductScreen(navController: NavHostController,productId:String){
     //add scaffold and top bar
     Scaffold(
         // Add a topbar
         topBar = {
             TopAppBar(title = {Text("Update Product", color = Color(0xFFC0EDAD), fontSize = 20.sp)},
 
-                colors = topAppBarColors(
+                colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFFEDADE0),
                     titleContentColor = Color(0xFF994A3C)
                 )
@@ -78,10 +82,27 @@ fun updateProductScreen(navController: NavHostController){
             var description by remember { mutableStateOf( "") }
             var price by remember { mutableStateOf("") }
             var imageUri by remember {mutableStateOf<Uri?>(null)}
+            var imageUrl by remember { mutableStateOf<String?>(null) }
+            //image picker
             val imagePickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.GetContent(),
             ){ uri : Uri? ->
-                imageUri = uri
+                if(uri!=null)imageUri = uri
+            }
+            val context = LocalContext.current
+            val myproductViewModel = ProductViewModel(navController, context)
+            //fretch product data
+            LaunchedEffect(productId){
+                myproductViewModel.databasereference.child(productId).get()
+                    .addOnSuccessListener { snapshot ->
+                        val product = snapshot.getValue(Product::class.java)
+                        product ?. let{
+                            productName = it.name
+                            description = it.description
+                            price = it.price
+                            imageUrl = it.imageUrl
+                        }
+                    }
             }
 
             //Outlined text field
@@ -108,33 +129,46 @@ fun updateProductScreen(navController: NavHostController){
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            //image preview
-            Card(
-                shape = CutCornerShape(10.dp),
-                modifier = Modifier
-                    .size(100.dp)
-                    .clickable{imagePickerLauncher.launch("image/*")}
-            ) {
+            //image preview (old or new)
+            val imageSource :Any? =imageUri ?:imageUri ?:imageUrl
                 AsyncImage(
-                    model = imageUri ?: R.drawable.flowers2,
-                    contentDescription = "Product Image",
+                    model = imageSource,
+                    contentDescription = "product",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(140.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
                 )
-            }
-            //image picker
-            OutlinedButton(onClick = {imagePickerLauncher.launch("image/*")}){
-                Text("Pick an image", fontSize = 10.sp, color= Color(0xFF994A3C))
-            }
-            val context= LocalContext.current
-            val myProductViewmodel = ProductViewModel(navController, context)
+            Spacer(modifier = Modifier.height(10.dp))
+            //image picker button
             Button(
-                onClick = {},
+                onClick = {imagePickerLauncher.launch("image/*")},
+                               modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF507FE5)))
+            {
+                Text("Update image", fontSize = 10.sp, color= Color(0xFF994A3C))
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Button(
+                onClick = {
+                    myproductViewModel.updateProduct(
+                        productId = productId,
+                        name = productName,
+                        price = price,
+                        description = description,
+                        imageUri = imageUri
+                    )
+                },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = buttonColors(containerColor = Color(0xFF507FE5))
-            ) {Text("Update Product", color = Color(0xFFE5B650), fontSize = 20.sp)}
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFE5B650),
+                    contentColor = Color(0xFFE56B50))
+            ) {
+                Text("Update Product", fontSize = 10.sp)
+            }
+
+
 
         }
     }
@@ -144,5 +178,5 @@ fun updateProductScreen(navController: NavHostController){
 @Preview(showBackground = true)
 @Composable
 fun updateProductPreview(){
-    updateProductScreen(rememberNavController())
+    updateProductScreen(rememberNavController(),productId = "2")
 }

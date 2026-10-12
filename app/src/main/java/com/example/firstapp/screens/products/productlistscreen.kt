@@ -135,7 +135,7 @@ fun productListScreen(navController: NavHostController){
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                         ){
-                            Button(onClick = {},
+                            Button(onClick = {myproductViewModel.deleteProduct(item.id)},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFF24030)
                                 ),
@@ -143,7 +143,7 @@ fun productListScreen(navController: NavHostController){
                             ){
                                 Text(text="Delete")
                             }
-                            Button(onClick = {navController.navigate(ROUTE_UPDATEPRODUCT)},
+                            Button(onClick = {navController.navigate("$ROUTE_UPDATEPRODUCT/${item.id}")},
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFF72CF81)
                                 ),

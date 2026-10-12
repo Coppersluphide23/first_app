@@ -15,6 +15,8 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -113,25 +115,44 @@ class ProductViewModel (var navController: NavHostController, val context: Conte
     }
     //u-update
     //update existing product in firebase
-    fun updateProduct(products: SnapshotStateList<Product>){
-        databasereference.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                products.clear()
-                for (snap in snapshot.children){
-                    val updateProduct=snap.getValue(Product::class.java)
-                    if (updateProduct !=null){
-                        products.add(updateProduct)
-                    }
-                }
+    fun updateProduct(productId: String, name: String, price: String, description: String, imageUri: Uri?){
+        CoroutineScope(Dispatchers.IO).launch {
+        try{
+            val newImageUrl = imageUri?.let{uploadToCloudinary(context,it)}
+            val currentUser= FirebaseAuth.getInstance().currentUser
+            val userId=currentUser?.uid?:""
+            val updates=mutableMapOf<String,Any>(
+                "id" to productId,
+                "name" to name,
+                "price" to price,
+                "description" to description,
+                "userId" to userId,
+            )
+            if(!newImageUrl.isNullOrEmpty()){
+                updates["imageUrl"]=newImageUrl
             }
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(context,error.message,Toast.LENGTH_LONG).show()
+            databasereference.child(productId).updateChildren(updates).await()
+            withContext(Dispatchers.Main){
+                Toast.makeText(context,"Product updated successfully",Toast.LENGTH_LONG).show()
+                navController.navigate(ROUTE_PRODUCTLIST)
             }
-        })
+        }catch (e:Exception){
+            withContext(Dispatchers.Main){
+                Toast.makeText(context,"Update failed:%${e.message}",Toast.LENGTH_LONG).show()
+            }
+
+          }
+       }
+
     }
     //d-delete
     //deletes an existing product from realtime db
-    fun deleteProduct(){
+    fun deleteProduct(productId: String){
+        databasereference.child(productId).removeValue().addOnSuccessListener {
+            Toast.makeText(context,"Product deleted successfully",Toast.LENGTH_LONG).show()
+        }.addOnFailureListener{
+            Toast.makeText(context,"Failed to delete product",Toast.LENGTH_SHORT).show()
+        }
 
     }
 
