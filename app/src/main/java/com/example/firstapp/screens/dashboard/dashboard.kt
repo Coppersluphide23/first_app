@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CheckboxDefaults.colors
@@ -69,8 +70,8 @@ fun DashboardScreen(navController: NavHostController) {
                     Text("Dashboard")
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF8CA1CF),
-                    titleContentColor = Color(0xFFCFBA8C)
+                    containerColor = Color(0xFFEDADE0),
+                    titleContentColor = Color.Black
                 ),
                 actions = {
                     IconButton(onClick = {}) {
@@ -98,19 +99,19 @@ fun DashboardScreen(navController: NavHostController) {
 
         // Bottom bar
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
+            NavigationBar (
+                containerColor = Color(0XFFADEDBA)
+            ){NavigationBarItem(
                     selected = true,
                     onClick = {},
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Home,
                             contentDescription = "Home"
+
                         )
                     },
-                    label = {
-                        Text("Home")
-                    }
+                    label = { Text("Home",color= Color(0xFF994A3C))}
                 )
                 NavigationBarItem(
                     selected = false,
