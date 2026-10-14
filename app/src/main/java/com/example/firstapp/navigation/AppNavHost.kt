@@ -12,6 +12,7 @@ import com.example.firstapp.screens.login.LoginScreen
 import com.example.firstapp.screens.register.RegisterScreen
 import com.example.firstapp.screens.splashscreen.Splashscreen
 import com.example.firstapp.screens.dashboard.DashboardScreen
+import com.example.firstapp.screens.demo.IntentScreen
 import com.example.firstapp.screens.onboardingscreen.OnboardingScreen
 import com.example.firstapp.screens.products.updateProductScreen
 import com.example.firstapp.screens.userdash.UserDashboard
@@ -55,7 +56,9 @@ fun AppNavHost(
             val productId = backstackEntry.arguments?.getString("productId")!!
             updateProductScreen(navController, productId = productId)
         }
-
+        composable(ROUTE_INTENTS){
+            IntentScreen(navController )
+        }
     }
 }
 
