@@ -15,22 +15,20 @@ import com.example.firstapp.screens.dashboard.DashboardScreen
 import com.example.firstapp.screens.demo.IntentScreen
 import com.example.firstapp.screens.onboardingscreen.OnboardingScreen
 import com.example.firstapp.screens.products.updateProductScreen
+import com.example.firstapp.screens.profile.ProfileScreen
 import com.example.firstapp.screens.userdash.UserDashboard
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = ROUTE_SPLASH,
+    startDestination: String = ROUTE_LOGIN,
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(ROUTE_SPLASH) {
-            Splashscreen(navController)
-        }
         composable(ROUTE_LOGIN) {
             LoginScreen(navController)
         }
@@ -58,6 +56,9 @@ fun AppNavHost(
         }
         composable(ROUTE_INTENTS){
             IntentScreen(navController )
+        }
+        composable(ROUTE_PROFILE){
+            ProfileScreen(navController)
         }
     }
 }

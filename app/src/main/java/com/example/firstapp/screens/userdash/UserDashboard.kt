@@ -58,6 +58,7 @@ import com.example.firstapp.R
 import com.example.firstapp.ViewModel.AuthViewModel
 import com.example.firstapp.ViewModel.ProductViewModel
 import com.example.firstapp.models.Product
+import com.example.firstapp.navigation.ROUTE_PROFILE
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,7 +105,7 @@ fun UserDashboard(navController: NavHostController){
                 )
                 NavigationBarItem(
                     selected =true,
-                    onClick = {},
+                    onClick = {navController.navigate(ROUTE_PROFILE)},
                     icon = {Icon(Icons.Default.Person,
                         contentDescription = "Person icon")},
                     label = { Text("Profile",color= Color(0XFF994A3C))},

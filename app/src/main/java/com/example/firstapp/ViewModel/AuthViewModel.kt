@@ -91,4 +91,32 @@ class AuthViewModel ( var navController: NavHostController, var context : Contex
 
 
     }
+    //get current user profile
+    fun getUserProfile(onResult: (User?) -> Unit){
+        //get current user ID
+        val userId=mAuth.currentUser?.uid
+        if(userId==null){
+            onResult(null)
+            return
+        }
+        //fetch user data from firebase database
+        FirebaseDatabase.getInstance().getReference("Users")
+            .child(userId)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                if(snapshot.exists()) {
+                    val user = snapshot.getValue(User::class.java)
+                    //return the user profile
+                    onResult(user)
+                }else {
+                    onResult(null)
+                }
+                }
+
+              .addOnFailureListener {
+                  onResult(null)
+              }
+
+    }
+
 }

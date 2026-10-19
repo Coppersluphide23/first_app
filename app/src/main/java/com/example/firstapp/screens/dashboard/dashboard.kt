@@ -57,6 +57,7 @@ import com.example.firstapp.ViewModel.AuthViewModel
 import com.example.firstapp.navigation.ROUTE_ADDPRODUCT
 import com.example.firstapp.navigation.ROUTE_INTENTS
 import com.example.firstapp.navigation.ROUTE_PRODUCTLIST
+import com.example.firstapp.navigation.ROUTE_PROFILE
 import com.example.firstapp.navigation.ROUTE_USERDASHBOARD
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,7 +130,7 @@ fun DashboardScreen(navController: NavHostController) {
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = {},
+                    onClick = {navController.navigate(ROUTE_PROFILE)},
                     icon = {
                         Icon(
                             imageVector = Icons.Default.Person,
