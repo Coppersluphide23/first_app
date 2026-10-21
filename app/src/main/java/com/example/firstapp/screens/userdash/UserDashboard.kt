@@ -1,9 +1,8 @@
 package com.example.firstapp.screens.userdash
-
-import android.R.attr.icon
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +10,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
@@ -25,11 +29,14 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -40,13 +47,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,7 +75,7 @@ import com.example.firstapp.navigation.ROUTE_PROFILE
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserDashboard(navController: NavHostController){
-    var context = LocalContext.current
+    val context = LocalContext.current
     var myproductViewModel = ProductViewModel(navController, context)
     var myauthviewmodel = AuthViewModel(navController, context)
     var username by remember { mutableStateOf("loading..") }
@@ -129,24 +141,29 @@ fun UserDashboard(navController: NavHostController){
                 .padding(16.dp)
         ){
             Text(
-            text = "Welcome!! ${username}",
+            text = "Welcome!! $username",
             color = Color(0xFF994A3C),
                 style = MaterialTheme.typography.headlineLarge
             )
-            Spacer( modifier = Modifier.height(16.dp))
-            var searchText by remember { mutableStateOf("") }
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = {searchText = it},
-                placeholder = { Text("Search products...")},
-                leadingIcon = {Icon(imageVector = Icons.Default.Search,
-                    contentDescription = "Search icon")},
-                shape = RoundedCornerShape(16.dp),
-                modifier = Modifier.fillMaxWidth()
-            )
+            Spacer( modifier = Modifier.height(8.dp))
+         val textFieldState = rememberTextFieldState()
+         val searchQuery = textFieldState.text.toString()
+         val searchResults = remember(searchQuery, products){
+             if(searchQuery.isBlank()) emptyList()
+             else products
+                 .map{it.name}
+                 .filter { it.contains(searchQuery, ignoreCase = true) }
+         }
+         SimpleSearchBar(
+             textFieldState = textFieldState,
+             onSearch = { query ->
+                 // Handle search action
+             },
+             searchResults = searchResults
+         )
             Spacer(modifier = Modifier.height(16.dp))
             Text(text="featured products",
-                color=Color(0xFF),
+                color=Color(0xFF994A3C),
                 style= MaterialTheme.typography.titleLarge)
             Spacer(modifier= Modifier.height(8.dp))
             LazyRow(
@@ -174,7 +191,7 @@ fun UserDashboard(navController: NavHostController){
                             //product name
                             Text(text = product.name,
                                 fontSize = 18.sp,
-                                color = Color(0xFF),
+                                color = Color(0xFF994A3C),
                             fontWeight = FontWeight.Bold)
                             //product description
                             Text(text = product.description,fontSize = 14.sp)
@@ -189,6 +206,70 @@ fun UserDashboard(navController: NavHostController){
     }
 }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SimpleSearchBar(
+    textFieldState: TextFieldState,
+    onSearch: (String) -> Unit,
+    searchResults: List<String>,
+    modifier: Modifier = Modifier
+) {
+    // Controls expansion state of the search bar
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics { isTraversalGroup = true }
+    ) {
+        SearchBar(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .semantics { traversalIndex = 0f },
+            inputField = {
+                SearchBarDefaults.InputField(
+                    query = textFieldState.text.toString(),
+                    onQueryChange = { newText ->
+                        textFieldState.edit { replace(0, length, newText) }
+                    },
+                    onSearch = { query ->
+                        onSearch(query)
+                        expanded = false
+                    },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    placeholder = { Text("Search") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    }
+                )
+            },
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+        ) {
+            // Display search results using LazyColumn for better performance
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                items(searchResults) { result ->
+                    ListItem(
+                        headlineContent = { Text(result) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                textFieldState.edit { replace(0, length, result) }
+                                onSearch(result)
+                                expanded = false
+                            }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun UserDashboardPreview() {

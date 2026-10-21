@@ -51,7 +51,7 @@ import com.example.firstapp.navigation.ROUTE_UPDATEPRODUCT
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun productListScreen(navController: NavHostController){
-    //add a scaffold
+    //add a scaffold  b
     Scaffold(
     // Add a topbar
     topBar = {
